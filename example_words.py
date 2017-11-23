@@ -1,12 +1,13 @@
 # Small LSTM Network to Generate Text for Alice in Wonderland
 import numpy
 import re
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from keras.layers import Dropout
-# from keras.layers import LSTM
-# from keras.callbacks import ModelCheckpoint
-# from keras.utils import np_utils
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import LSTM
+from keras.callbacks import ModelCheckpoint
+from keras.utils import np_utils
+
 # load ascii text and covert to lowercase
 filename = 'parsing/shakespeare.txt'
 raw_text = open(filename, encoding='utf8').read()
@@ -18,12 +19,6 @@ wordList = [w for w in wordList if re.match("^[a-z]*$", w)]
 # print(len(wordList))
 words = sorted(list(set(wordList)))
 word_to_int = dict((w, i) for i, w in enumerate(words))
-
-# print(words)
-# chars = sorted(list(set(raw_text)))
-# char_to_int = dict((c, i) for i, c in enumerate(chars))
-
-
 
 # summarize the loaded data
 n_words = len(wordList)
@@ -47,19 +42,19 @@ X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
 X = X / float(n_vocab)
 
 
-# # one hot encode the output variable
-# y = np_utils.to_categorical(dataY)
-# # define the LSTM model
-# model = Sequential()
-# model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
-# model.add(Dropout(0.2))
-# model.add(LSTM(256))
-# model.add(Dropout(0.2))
-# model.add(Dense(y.shape[1], activation='softmax'))
-# model.compile(loss='categorical_crossentropy', optimizer='adam')
-# # define the checkpoint
-# filepath='weights-improvement-{epoch:02d}-{loss:.4f}-larger.hdf5'
-# checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-# callbacks_list = [checkpoint]
-# # fit the model
-# model.fit(X, y, epochs=20, batch_size=128, callbacks=callbacks_list)
+# one hot encode the output variable
+y = np_utils.to_categorical(dataY)
+# define the LSTM model
+model = Sequential()
+model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
+model.add(Dropout(0.2))
+model.add(LSTM(256))
+model.add(Dropout(0.2))
+model.add(Dense(y.shape[1], activation='softmax'))
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+# define the checkpoint
+filepath='words-weights-improvement-{epoch:02d}-{loss:.4f}-larger.hdf5'
+checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+callbacks_list = [checkpoint]
+# fit the model
+model.fit(X, y, epochs=20, batch_size=128, callbacks=callbacks_list)
