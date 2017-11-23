@@ -36,14 +36,23 @@ for i in range(0, n_words - seq_length, 1):
 	dataY.append(word_to_int[seq_out])
 n_patterns = len(dataX)
 print('Total Patterns: ', n_patterns)
-# reshape X to be [samples, time steps, features]
-X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
-# normalize
-X = X / float(n_vocab)
 
+# # reshape X to be [samples, time steps, features]
+# X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
+# # normalize
+# X = X / float(n_vocab)
 
-# one hot encode the output variable
-y = np_utils.to_categorical(dataY)
+# # one hot encode the output variable
+# y = np_utils.to_categorical(dataY)
+
+print('Vectorization...')
+X = np.zeros((n_patterns, seq_length, len(words)), dtype=np.bool)
+y = np.zeros((n_patterns, len(words)), dtype=np.bool)
+for i, sentence in enumerate(dataX):
+    for t, word in enumerate(sentence):
+        x[i, t, word_to_int[word]] = 1
+    y[i, word_to_int[dataY[i]]] = 1
+
 # define the LSTM model
 model = Sequential()
 model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))

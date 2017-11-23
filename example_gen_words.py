@@ -30,7 +30,8 @@ print('Total Words: ', n_words)
 print('Total Vocab: ', n_vocab)
 
 # prepare the dataset of input to output pairs encoded as integers
-seq_length = 100
+seq_length = 20
+step_size = 3
 dataX = []
 dataY = []
 for i in range(0, n_words - seq_length, 1):
@@ -38,12 +39,22 @@ for i in range(0, n_words - seq_length, 1):
 	seq_out = wordList[i + seq_length]
 	dataX.append([word_to_int[word] for word in seq_in])
 	dataY.append(word_to_int[seq_out])
-n_patterns = len(dataX)
-print('Total Patterns: ', n_patterns)
-# reshape X to be [samples, time steps, features]
-X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
-# normalize
-X = X / float(n_vocab)
+
+# n_patterns = len(dataX)
+# print('Total Patterns: ', n_patterns)
+# # reshape X to be [samples, time steps, features]
+# X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
+# # normalize
+# X = X / float(n_vocab)
+
+
+print('Vectorization...')
+X = np.zeros((len(dataX), seq_length, len(words)), dtype=np.bool)
+y = np.zeros((len(dataX), len(words)), dtype=np.bool)
+for i, sentence in enumerate(dataX):
+    for t, word in enumerate(sentence):
+        x[i, t, word_to_int[word]] = 1
+    y[i, word_to_int[dataY[i]]] = 1
 
 
 # one hot encode the output variable
