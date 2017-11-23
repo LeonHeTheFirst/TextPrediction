@@ -1,5 +1,5 @@
 # Small LSTM Network to Generate Text for Alice in Wonderland
-import numpy
+import numpy as np
 import re
 from keras.models import Sequential
 from keras.layers import Dense
@@ -38,7 +38,7 @@ n_patterns = len(dataX)
 print('Total Patterns: ', n_patterns)
 
 # # reshape X to be [samples, time steps, features]
-# X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
+# X = np.reshape(dataX, (n_patterns, seq_length, 1))
 # # normalize
 # X = X / float(n_vocab)
 
