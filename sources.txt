@@ -1,0 +1,7 @@
+https://github.com/fchollet/keras
+https://github.com/bburns/LanguageModels
+https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/
+http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#multi-gpu-and-distributed-training
+https://keras.io/
+https://www.tensorflow.org/api_docs/python/

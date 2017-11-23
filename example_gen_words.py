@@ -46,32 +46,34 @@ X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
 X = X / float(n_vocab)
 
 
-# # one hot encode the output variable
-# y = np_utils.to_categorical(dataY)
-# # define the LSTM model
-# model = Sequential()
-# model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
-# model.add(Dropout(0.2))
-# model.add(Dense(y.shape[1], activation='softmax'))
-# # load the network weights
-# filename = 'weights-improvement-20-2.0762.hdf5'
-# model.load_weights(filename)
-# model.compile(loss='categorical_crossentropy', optimizer='adam')
-# # pick a random seed
-# start = numpy.random.randint(0, len(dataX)-1)
-# pattern = dataX[start]
-# print('Seed:')
-# outstring = ('\'' + ''.join([int_to_char[value] for value in pattern]) + '\'').encode('utf-8')
-# print(outstring)
-# # generate characters
-# for i in range(1000):
-# 	x = numpy.reshape(pattern, (1, len(pattern), 1))
-# 	x = x / float(n_vocab)
-# 	prediction = model.predict(x, verbose=0)
-# 	index = numpy.argmax(prediction)
-# 	result = int_to_char[index]
-# 	seq_in = [int_to_char[value] for value in pattern]
-# 	print(result.encode('utf-8').decode('utf-8'), end='')
-# 	pattern.append(index)
-# 	pattern = pattern[1:len(pattern)]
-# print('\nDone.')
+# one hot encode the output variable
+y = np_utils.to_categorical(dataY)
+# define the LSTM model
+model = Sequential()
+model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
+model.add(Dropout(0.2))
+model.add(LSTM(256))
+model.add(Dropout(0.2))
+model.add(Dense(y.shape[1], activation='softmax'))
+# load the network weights
+filename = 'weights-improvement-20-2.0762-larger.hdf5'
+model.load_weights(filename)
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+# pick a random seed
+start = numpy.random.randint(0, len(dataX)-1)
+pattern = dataX[start]
+print('Seed:')
+outstring = ('\'' + ''.join([int_to_word[value] for value in pattern]) + '\'').encode('utf-8')
+print(outstring)
+# generate words
+for i in range(1000):
+	x = numpy.reshape(pattern, (1, len(pattern), 1))
+	x = x / float(n_vocab)
+	prediction = model.predict(x, verbose=0)
+	index = numpy.argmax(prediction)
+	result = int_to_word[index]
+	seq_in = [int_to_word[value] for value in pattern]
+	print(result.encode('utf-8').decode('utf-8'), end='')
+	pattern.append(index)
+	pattern = pattern[1:len(pattern)]
+print('\nDone.')
