@@ -1,6 +1,6 @@
 # Load LSTM network and generate text
 import sys
-import numpy
+import numpy as np
 import re
 from keras.models import Sequential
 from keras.layers import Dense
@@ -10,7 +10,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
 # load ascii text and covert to lowercase
-filename = 'parsing/shakespeare.txt'
+filename = 'wonderland.txt'
 raw_text = open(filename, encoding='utf8').read()
 raw_text = raw_text.lower()
 
@@ -30,7 +30,7 @@ print('Total Words: ', n_words)
 print('Total Vocab: ', n_vocab)
 
 # prepare the dataset of input to output pairs encoded as integers
-seq_length = 20
+seq_length = 100
 step_size = 3
 dataX = []
 dataY = []
@@ -40,21 +40,21 @@ for i in range(0, n_words - seq_length, 1):
 	dataX.append([word_to_int[word] for word in seq_in])
 	dataY.append(word_to_int[seq_out])
 
-# n_patterns = len(dataX)
-# print('Total Patterns: ', n_patterns)
-# # reshape X to be [samples, time steps, features]
-# X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
-# # normalize
-# X = X / float(n_vocab)
+n_patterns = len(dataX)
+print('Total Patterns: ', n_patterns)
+# reshape X to be [samples, time steps, features]
+X = np.reshape(dataX, (n_patterns, seq_length, 1))
+# normalize
+X = X / float(n_vocab)
 
 
-print('Vectorization...')
-X = np.zeros((len(dataX), seq_length, len(words)), dtype=np.bool)
-y = np.zeros((len(dataX), len(words)), dtype=np.bool)
-for i, sentence in enumerate(dataX):
-    for t, word in enumerate(sentence):
-        x[i, t, word_to_int[word]] = 1
-    y[i, word_to_int[dataY[i]]] = 1
+# print('Vectorization...')
+# X = np.zeros((len(dataX), seq_length, len(words)), dtype=np.bool)
+# y = np.zeros((len(dataX), len(words)), dtype=np.bool)
+# for i, sentence in enumerate(dataX):
+#     for t, word in enumerate(sentence):
+#         x[i, t, word_to_int[word]] = 1
+#     y[i, word_to_int[dataY[i]]] = 1
 
 
 # one hot encode the output variable
@@ -63,28 +63,26 @@ y = np_utils.to_categorical(dataY)
 model = Sequential()
 model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
 model.add(Dropout(0.2))
-model.add(LSTM(256))
-model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 # load the network weights
-filename = 'words-weights-improvement-20-2.0762-larger.hdf5'
+filename = 'words-weights-improvement-20-5.7761-smaller.hdf5'
 model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 # pick a random seed
-start = numpy.random.randint(0, len(dataX)-1)
+start = np.random.randint(0, len(dataX)-1)
 pattern = dataX[start]
 print('Seed:')
-outstring = ('\'' + ''.join([int_to_word[value] for value in pattern]) + '\'').encode('utf-8')
+outstring = ('\'' + ' '.join([int_to_word[value] for value in pattern]) + '\'').encode('utf-8')
 print(outstring)
 # generate words
 for i in range(1000):
-	x = numpy.reshape(pattern, (1, len(pattern), 1))
+	x = np.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
 	prediction = model.predict(x, verbose=0)
-	index = numpy.argmax(prediction)
+	index = np.argmax(prediction)
 	result = int_to_word[index]
 	seq_in = [int_to_word[value] for value in pattern]
-	print(result.encode('utf-8').decode('utf-8'), end='')
+	print(result.encode('utf-8').decode('utf-8'), end=' ')
 	pattern.append(index)
 	pattern = pattern[1:len(pattern)]
 print('\nDone.')

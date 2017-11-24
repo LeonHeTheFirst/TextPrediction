@@ -9,7 +9,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
 # load ascii text and covert to lowercase
-filename = 'parsing/shakespeare.txt'
+filename = 'wonderland.txt'
 raw_text = open(filename, encoding='utf8').read()
 raw_text = raw_text.lower()
 # create mapping of unique chars to integers
@@ -37,32 +37,30 @@ for i in range(0, n_words - seq_length, 1):
 n_patterns = len(dataX)
 print('Total Patterns: ', n_patterns)
 
-# # reshape X to be [samples, time steps, features]
-# X = np.reshape(dataX, (n_patterns, seq_length, 1))
-# # normalize
-# X = X / float(n_vocab)
+# reshape X to be [samples, time steps, features]
+X = np.reshape(dataX, (n_patterns, seq_length, 1))
+# normalize
+X = X / float(n_vocab)
 
-# # one hot encode the output variable
-# y = np_utils.to_categorical(dataY)
+# one hot encode the output variable
+y = np_utils.to_categorical(dataY)
 
-print('Vectorization...')
-X = np.zeros((n_patterns, seq_length, len(words)), dtype=np.bool)
-y = np.zeros((n_patterns, len(words)), dtype=np.bool)
-for i, sentence in enumerate(dataX):
-    for t, word in enumerate(sentence):
-        x[i, t, word_to_int[word]] = 1
-    y[i, word_to_int[dataY[i]]] = 1
+# print('Vectorization...')
+# X = np.zeros((n_patterns, seq_length, len(words)), dtype=np.bool)
+# y = np.zeros((n_patterns, len(words)), dtype=np.bool)
+# for i, sentence in enumerate(dataX):
+#     for t, word in enumerate(sentence):
+#         X[i, t, word_to_int[word]] = 1
+#     y[i, word_to_int[dataY[i]]] = 1
 
 # define the LSTM model
 model = Sequential()
 model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
 model.add(Dropout(0.2))
-model.add(LSTM(256))
-model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 # define the checkpoint
-filepath='words-weights-improvement-{epoch:02d}-{loss:.4f}-larger.hdf5'
+filepath='words-weights-improvement-{epoch:02d}-{loss:.4f}-smaller.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 # fit the model
