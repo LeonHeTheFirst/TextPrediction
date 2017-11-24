@@ -21,8 +21,13 @@ import numpy as np
 import random
 import sys
 
-path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
-text = open(path).read().lower()
+# path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
+# text = open(path).read().lower()
+
+filename = 'data/shakespeare_subset.txt'
+text = open(filename, encoding='utf8').read()
+text = text.lower()
+
 print('corpus length:', len(text))
 
 chars = sorted(list(set(text)))
