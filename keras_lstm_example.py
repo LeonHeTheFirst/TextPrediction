@@ -24,10 +24,10 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/shakespeare.txt'
-output_filename = 'shakespeare_out.txt'
-text = open(filename, encoding='utf8').read()
-text = text.lower()
+filename = 'data_parsed/drseuss.txt'
+output_filename = 'output_text/drseuss_out.txt'
+text = open(filename, encoding='utf8').read().lower()
+# text = text.lower()
 
 print('corpus length:', len(text))
 
@@ -35,6 +35,8 @@ chars = sorted(list(set(text)))
 print('total chars:', len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
+
+print(char_indices)
 
 # cut the text in semi-redundant sequences of maxlen characters
 maxlen = 40
@@ -58,8 +60,9 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
-model.add(LSTM(128))
+model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+# model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
+# model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 optimizer = RMSprop(lr=0.01)
@@ -78,13 +81,13 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-larger.hdf5'
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-drseuss-larger.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
 model.fit(x, y,
           batch_size=128,
-          epochs=10,
+          epochs=30,
           callbacks=callbacks_list)
 
 outfile = open(output_filename, 'w')
@@ -119,7 +122,9 @@ for iteration in range(1, 10):
             generated += next_char
             sentence = sentence[1:] + next_char
 
-            sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
-            outfile.write(next_char.encode('utf-8').decode('utf-8'))
-            sys.stdout.flush()
+            sys.stdout.write(next_char.encode('utf8','ignore').decode('utf8'))
+            outfile.write(next_char.encode('utf8','ignore').decode('utf8'))
+            # sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
+            # outfile.write(next_char.encode('utf-8').decode('utf-8'))
+            # sys.stdout.flush()
         print()

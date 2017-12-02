@@ -6,7 +6,7 @@ import codecs
 
 # function for parsing the data
 def data_parser(text, dic):
-    for i, j in dic.iteritems():
+    for i, j in dic.items():
         text = re.sub(i, j, text)
     return text
 
@@ -25,6 +25,7 @@ regexs = {'-':'',
     '  +':' ', # Remove extra spaces
     '^\t':'', # Remove tabs at beginning on line
     '\t':' ', # Change Tabs to spaces
+    '—':' ', # Change emdashes
     '^[0-9].*':'', # Lines beginning with numeric char
     '.*\|.*':'', # Weird lines with | character
     '^Audience.*':'', # Remove audience lines
@@ -48,7 +49,7 @@ output_file = open(output_file_name, 'w')
 num_chars = 0
 for input_file_name in files:
     # Read file
-    input_file = open(os.path.join(input_dir_name, input_file_name))
+    input_file = open(os.path.join(input_dir_name, input_file_name), encoding='utf8')
     my_text = input_file.readlines()[:] # Read the whole text file,
     #my_text = codecs.open(os.path.join(input_dir_name, input_file_name), 'r', encoding='utf-8').readlines()
     input_file.close()
@@ -58,7 +59,8 @@ for input_file_name in files:
 
         if (line != '\n') and (line != '\r\n') and (num_chars < max_chars): # If line hasn't been reduced to empty line, write it out
             num_chars += len(line)
-            output_file.write(line)
+            output_file.write(line.encode('utf-8', 'ignore').decode('utf-8'))
+            print(line.encode('utf-8', 'ignore').decode('utf-8'))
 
 output_file.close()
 
