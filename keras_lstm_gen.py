@@ -24,9 +24,10 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/shakespeare.txt'
-output_filename = 'shakespeare_out.txt'
-text = open(filename, encoding='utf8').read()
+filename = 'data_parsed/drseuss.txt'
+output_filename = 'drseuss_out.txt'
+weights_filename = 'weights-improvement-10-1.0647-drseuss-larger.hdf5'
+text = open(filename).read()
 text = text.lower()
 
 print('corpus length:', len(text))
@@ -58,13 +59,13 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
-model.add(LSTM(128))
+model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+# model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
+# model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
 # load the network weights
-weights_filename = 'weights-improvement-04-1.4786-shakespeare-larger.hdf5'
 model.load_weights(weights_filename)
 
 optimizer = RMSprop(lr=0.01)
@@ -114,7 +115,9 @@ for iteration in range(1, 10):
             generated += next_char
             sentence = sentence[1:] + next_char
 
-            sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
-            outfile.write(next_char.encode('utf-8').decode('utf-8'))
+            sys.stdout.write(next_char.encode('cp850','replace').decode('cp850'))
+            outfile.write(next_char.encode('cp850','replace').decode('cp850'))
+            # sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
+            # outfile.write(next_char.encode('utf-8').decode('utf-8'))
             sys.stdout.flush()
         print()
