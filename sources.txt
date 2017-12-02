@@ -9,3 +9,5 @@ https://www.tensorflow.org/api_docs/python/
 # Text Sources
 https://github.com/paigecm/2016-campaign
 https://raw.githubusercontent.com/deanwampler/spark-scala-tutorial/master/data/shakespeare/all-shakespeare.txt
+https://github.com/robertsdionne/rwet/blob/master/hw2/drseuss.txt
+
