@@ -62,6 +62,11 @@ model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
 model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
+
+# load the network weights
+weights_filename = 'weights-improvement-04-1.4786-shakespeare-larger.hdf5'
+model.load_weights(weights_filename)
+
 optimizer = RMSprop(lr=0.01)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
@@ -75,17 +80,7 @@ def sample(preds, temperature=1.0):
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
 
-
 print('-' * 50)
-
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-larger.hdf5'
-checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-callbacks_list = [checkpoint]
-
-model.fit(x, y,
-          batch_size=128,
-          epochs=10,
-          callbacks=callbacks_list)
 
 outfile = open(output_filename, 'w')
 
