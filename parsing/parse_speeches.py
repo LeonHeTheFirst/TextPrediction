@@ -14,10 +14,10 @@ def data_parser(text, dic):
 max_chars = 500000
 
 # Directory with files to read and write to
-input_dir_name = '../data/speeches/trump'
-#input_dir_name = '../data/speeches/clinton'
-output_file_name = '../data_parsed/trump.txt'
-#output_file_name = '../data_parsed/clinton.txt'
+# input_dir_name = '../data/speeches/trump'
+input_dir_name = '../data/speeches/clinton'
+# output_file_name = '../data_parsed/trump.txt'
+output_file_name = '../data_parsed/clinton.txt'
 
 regexs = {'-':'',
     '\[(.*?)\]':'', # Remove characters in brackets
@@ -49,7 +49,7 @@ output_file = open(output_file_name, 'w')
 num_chars = 0
 for input_file_name in files:
     # Read file
-    input_file = open(os.path.join(input_dir_name, input_file_name), encoding='utf8')
+    input_file = open(os.path.join(input_dir_name, input_file_name), encoding='ascii', errors='ignore')
     my_text = input_file.readlines()[:] # Read the whole text file,
     #my_text = codecs.open(os.path.join(input_dir_name, input_file_name), 'r', encoding='utf-8').readlines()
     input_file.close()
@@ -59,8 +59,8 @@ for input_file_name in files:
 
         if (line != '\n') and (line != '\r\n') and (num_chars < max_chars): # If line hasn't been reduced to empty line, write it out
             num_chars += len(line)
-            output_file.write(line.encode('utf-8', 'ignore').decode('utf-8'))
-            print(line.encode('utf-8', 'ignore').decode('utf-8'))
+            output_file.write(line)
+            print(line)
 
 output_file.close()
 

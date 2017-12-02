@@ -24,9 +24,9 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/drseuss.txt'
-output_filename = 'drseuss_out.txt'
-weights_filename = 'weights-improvement-10-1.0647-drseuss-larger.hdf5'
+filename = 'data_parsed/clinton.txt'
+output_filename = 'output_text/clinton_out.txt'
+weights_filename = 'weights-improvement-17-1.2188-clinton-larger.hdf5'
 text = open(filename).read()
 text = text.lower()
 
@@ -115,8 +115,8 @@ for iteration in range(1, 10):
             generated += next_char
             sentence = sentence[1:] + next_char
 
-            sys.stdout.write(next_char.encode('cp850','replace').decode('cp850'))
-            outfile.write(next_char.encode('cp850','replace').decode('cp850'))
+            sys.stdout.write(next_char)
+            outfile.write(next_char)
             # sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
             # outfile.write(next_char.encode('utf-8').decode('utf-8'))
             sys.stdout.flush()

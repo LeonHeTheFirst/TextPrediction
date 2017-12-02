@@ -24,9 +24,9 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/drseuss.txt'
-output_filename = 'output_text/drseuss_out.txt'
-text = open(filename, encoding='utf8').read().lower()
+filename = 'data_parsed/clinton.txt'
+output_filename = 'output_text/clinton_out.txt'
+text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 # text = text.lower()
 
 print('corpus length:', len(text))
@@ -81,7 +81,7 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-drseuss-larger.hdf5'
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-clinton-larger.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
