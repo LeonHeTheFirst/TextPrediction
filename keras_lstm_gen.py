@@ -19,14 +19,15 @@ from keras.utils.data_utils import get_file
 from keras.callbacks import ModelCheckpoint
 import numpy as np
 import random
-import sys
+import sys, os
 
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/clinton.txt'
-output_filename = 'output_text/clinton_out.txt'
-weights_filename = 'weights-improvement-17-1.2188-clinton-larger.hdf5'
+filename = 'data_parsed/trump.txt'
+output_filename = 'output_text/trump_out_epoch_1.txt'
+weight_dir_name = 'weights/trump/'
+weights_filename = 'weights/trump/weights-improvement-01-1.9294-trump-larger.hdf5'
 text = open(filename).read()
 text = text.lower()
 
@@ -66,10 +67,10 @@ model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
 # load the network weights
-model.load_weights(weights_filename)
+# model.load_weights(weights_filename)
 
 optimizer = RMSprop(lr=0.01)
-model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+# model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 
 def sample(preds, temperature=1.0):
@@ -83,38 +84,80 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-outfile = open(output_filename, 'w')
+files = []
+for file in os.listdir(weight_dir_name):
+    if file.endswith(".hdf5"):
+        files.append(file)
 
-# train the model, output generated text after each iteration
-for iteration in range(1, 5):
+# outfile = open(output_filename, 'w')
+diversity = 0.5
+
+start_index = random.randint(0, len(text) - maxlen - 1)
+generated = ''
+sentence = text[start_index: start_index + maxlen]
+generated += sentence
+print('----- Generating with seed: "' + sentence + '"')
+sys.stdout.write(generated)
+# outfile.write(generated)
+
+for weight_file in files:
+
+    model.load_weights(weight_dir_name + weight_file)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+
+    substrings = weight_file.split('-')
+    epoch_number = substrings[2]
+    source = substrings[4]
+    new_output_filename = 'output_text/' + source + '_epoch_' + epoch_number + '.txt'
+    new_output_file = open(new_output_filename, 'w')
+
+    for i in range(1000):
+        x_pred = np.zeros((1, maxlen, len(chars)))
+        for t, char in enumerate(sentence):
+            x_pred[0, t, char_indices[char]] = 1.
+
+        preds = model.predict(x_pred, verbose=0)[0]
+        next_index = sample(preds, diversity)
+        next_char = indices_char[next_index]
+
+        generated += next_char
+        sentence = sentence[1:] + next_char
+
+        sys.stdout.write(next_char)
+        new_output_file.write(next_char)
     print()
-    print('-' * 50)
+    new_output_file.close()
 
-    start_index = random.randint(0, len(text) - maxlen - 1)
+# # train the model, output generated text after each iteration
+# for iteration in range(1, 5):
+#     print()
+#     print('-' * 50)
 
-    for diversity in [0.2, 0.5, 1.0]:
-        print()
-        print('----- diversity:', diversity)
+#     start_index = random.randint(0, len(text) - maxlen - 1)
 
-        generated = ''
-        sentence = text[start_index: start_index + maxlen]
-        generated += sentence
-        print('----- Generating with seed: "' + sentence + '"')
-        sys.stdout.write(generated)
-        outfile.write(generated)
+#     for diversity in [0.2, 0.5, 1.0]:
+#         print()
+#         print('----- diversity:', diversity)
 
-        for i in range(400):
-            x_pred = np.zeros((1, maxlen, len(chars)))
-            for t, char in enumerate(sentence):
-                x_pred[0, t, char_indices[char]] = 1.
+#         generated = ''
+#         sentence = text[start_index: start_index + maxlen]
+#         generated += sentence
+#         print('----- Generating with seed: "' + sentence + '"')
+#         sys.stdout.write(generated)
+#         outfile.write(generated)
 
-            preds = model.predict(x_pred, verbose=0)[0]
-            next_index = sample(preds, diversity)
-            next_char = indices_char[next_index]
+#         for i in range(400):
+#             x_pred = np.zeros((1, maxlen, len(chars)))
+#             for t, char in enumerate(sentence):
+#                 x_pred[0, t, char_indices[char]] = 1.
 
-            generated += next_char
-            sentence = sentence[1:] + next_char
+#             preds = model.predict(x_pred, verbose=0)[0]
+#             next_index = sample(preds, diversity)
+#             next_char = indices_char[next_index]
 
-            sys.stdout.write(next_char)
-            outfile.write(next_char)
-        print()
+#             generated += next_char
+#             sentence = sentence[1:] + next_char
+
+#             sys.stdout.write(next_char)
+#             outfile.write(next_char)
+#         print()

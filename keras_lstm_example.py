@@ -91,37 +91,62 @@ model.fit(x, y,
           callbacks=callbacks_list)
 
 outfile = open(output_filename, 'w')
+diversity = 0.5
 
-# train the model, output generated text after each iteration
-for iteration in range(1, 5):
-    print()
-    print('-' * 50)
+start_index = random.randint(0, len(text) - maxlen - 1)
+generated = ''
+sentence = text[start_index: start_index + maxlen]
+generated += sentence
+print('----- Generating with seed: "' + sentence + '"')
+sys.stdout.write(generated)
+outfile.write(generated)
 
-    start_index = random.randint(0, len(text) - maxlen - 1)
+for i in range(500):
+    x_pred = np.zeros((1, maxlen, len(chars)))
+    for t, char in enumerate(sentence):
+        x_pred[0, t, char_indices[char]] = 1.
 
-    for diversity in [0.2, 0.5, 1.0]:
-        print()
-        print('----- diversity:', diversity)
+    preds = model.predict(x_pred, verbose=0)[0]
+    next_index = sample(preds, diversity)
+    next_char = indices_char[next_index]
 
-        generated = ''
-        sentence = text[start_index: start_index + maxlen]
-        generated += sentence
-        print('----- Generating with seed: "' + sentence + '"')
-        sys.stdout.write(generated)
-        outfile.write(generated)
+    generated += next_char
+    sentence = sentence[1:] + next_char
 
-        for i in range(400):
-            x_pred = np.zeros((1, maxlen, len(chars)))
-            for t, char in enumerate(sentence):
-                x_pred[0, t, char_indices[char]] = 1.
+    sys.stdout.write(next_char)
+    outfile.write(next_char)
+print()
 
-            preds = model.predict(x_pred, verbose=0)[0]
-            next_index = sample(preds, diversity)
-            next_char = indices_char[next_index]
+# # train the model, output generated text after each iteration
+# for iteration in range(1, 5):
+#     print()
+#     print('-' * 50)
 
-            generated += next_char
-            sentence = sentence[1:] + next_char
+#     start_index = random.randint(0, len(text) - maxlen - 1)
 
-            sys.stdout.write(next_char)
-            outfile.write(next_char)
-        print()
+#     for diversity in [0.2, 0.5, 1.0]:
+#         print()
+#         print('----- diversity:', diversity)
+
+#         generated = ''
+#         sentence = text[start_index: start_index + maxlen]
+#         generated += sentence
+#         print('----- Generating with seed: "' + sentence + '"')
+#         sys.stdout.write(generated)
+#         outfile.write(generated)
+
+#         for i in range(400):
+#             x_pred = np.zeros((1, maxlen, len(chars)))
+#             for t, char in enumerate(sentence):
+#                 x_pred[0, t, char_indices[char]] = 1.
+
+#             preds = model.predict(x_pred, verbose=0)[0]
+#             next_index = sample(preds, diversity)
+#             next_char = indices_char[next_index]
+
+#             generated += next_char
+#             sentence = sentence[1:] + next_char
+
+#             sys.stdout.write(next_char)
+#             outfile.write(next_char)
+#         print()
