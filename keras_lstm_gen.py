@@ -24,12 +24,11 @@ import sys, os
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/trump.txt'
-output_filename = 'output_text/trump_out_epoch_1.txt'
-weight_dir_name = 'weights/trump/'
-weights_filename = 'weights/trump/weights-improvement-01-1.9294-trump-larger.hdf5'
-text = open(filename).read()
-text = text.lower()
+filename = 'data_parsed/shakespeare.txt'
+output_filename = 'output_text/shakespeare_out_epoch_1.txt'
+weight_dir_name = 'weights/shakespeare/'
+weights_filename = 'weights/shakespeare/weights-improvement-01-1.9294-shakespeare-larger.hdf5'
+text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 print('corpus length:', len(text))
 
@@ -62,6 +61,8 @@ print('Build model...')
 model = Sequential()
 model.add(LSTM(128, input_shape=(maxlen, len(chars))))
 # model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
 # model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
@@ -105,6 +106,7 @@ for weight_file in files:
     model.load_weights(weight_dir_name + weight_file)
     model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
+    weight_file.replace('.', '-')
     substrings = weight_file.split('-')
     epoch_number = substrings[2]
     source = substrings[4]

@@ -24,8 +24,8 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/clinton.txt'
-output_filename = 'output_text/clinton_out.txt'
+filename = 'data_parsed/shakespeare.txt'
+output_filename = 'output_text/shakespeare_out_2.txt'
 text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 # text = text.lower()
 
@@ -62,9 +62,13 @@ print('Build model...')
 model = Sequential()
 model.add(LSTM(128, input_shape=(maxlen, len(chars))))
 # model.add(LSTM(128, input_shape=(maxlen, len(chars)), return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
 # model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
+
+
 optimizer = RMSprop(lr=0.01)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
@@ -81,7 +85,7 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-clinton-larger.hdf5'
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-four-layer_sequel.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
