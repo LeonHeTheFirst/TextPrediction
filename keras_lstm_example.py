@@ -24,8 +24,8 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/shakespeare.txt'
-output_filename = 'output_text/shakespeare_out_2.txt'
+filename = 'data_parsed/trump.txt'
+output_filename = 'output_text/trump_out_long.txt'
 text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 # text = text.lower()
 
@@ -39,7 +39,7 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 print(char_indices)
 
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 40
+maxlen = 100
 step = 3
 sentences = []
 next_chars = []
@@ -85,7 +85,7 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-four-layer_sequel.hdf5'
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-trump-100c.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 

@@ -24,10 +24,10 @@ import sys, os
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/shakespeare.txt'
-output_filename = 'output_text/shakespeare_out_epoch_1.txt'
-weight_dir_name = 'weights/shakespeare/'
-weights_filename = 'weights/shakespeare/weights-improvement-01-1.9294-shakespeare-larger.hdf5'
+filename = 'data_parsed/trump.txt'
+output_filename = 'output_text/trump_out_epoch_1.txt'
+weight_dir_name = 'weights/trump/100character/'
+weights_filename = 'weights/trump/weights-improvement-01-1.9294-trump-larger.hdf5'
 text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 print('corpus length:', len(text))
