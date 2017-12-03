@@ -86,13 +86,13 @@ print('-' * 50)
 outfile = open(output_filename, 'w')
 
 # train the model, output generated text after each iteration
-for iteration in range(1, 10):
+for iteration in range(1, 5):
     print()
     print('-' * 50)
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
+    for diversity in [0.2, 0.5, 1.0]:
         print()
         print('----- diversity:', diversity)
 
@@ -117,7 +117,4 @@ for iteration in range(1, 10):
 
             sys.stdout.write(next_char)
             outfile.write(next_char)
-            # sys.stdout.write(next_char.encode('utf-8').decode('utf-8'))
-            # outfile.write(next_char.encode('utf-8').decode('utf-8'))
-            sys.stdout.flush()
         print()
