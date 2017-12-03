@@ -3,17 +3,17 @@ from wordcloud import WordCloud
 
 
 # Directory with files to read and write to
-input_dir_name = '../data_parsed/trump.txt'
-input_dir_name = '../data_parsed/clinton.txt'
-input_dir_name = '../data_parsed/shakespeare.txt'
-input_dir_name = '../data_parsed/drseuss.txt'
+input_file_name = '../data_parsed/trump.txt'
+input_file_name = '../data_parsed/clinton.txt'
+input_file_name = '../data_parsed/shakespeare.txt'
+input_file_name = '../data_parsed/drseuss.txt'
 output_file_name = '../wordclouds/trump.png'
 output_file_name = '../wordclouds/clinton.png'
 output_file_name = '../wordclouds/shakespeare.png'
 output_file_name = '../wordclouds/drseuss.png'
 
 # Read the whole text.
-text = open(input_dir_name).read()
+text = open(input_file_name).read()
 
 # Generate a word cloud image
 wordcloud = WordCloud().generate(text)
