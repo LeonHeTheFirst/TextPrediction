@@ -6,6 +6,10 @@ input_file_names = ['../output_text/trump_out.txt',
                     '../output_text/shakespeare_out.txt',
                     '../output_text/drseuss_out.txt']
 
+# input_file_names = ['../data_parsed/trump.txt',
+input_file_names = ['../data_parsed/shakespeare.txt',
+                    '../data_parsed/drseuss.txt']
+
 for i in range(0, len(input_file_names)):
     input_file_name = input_file_names[i]
     print(input_file_name)
