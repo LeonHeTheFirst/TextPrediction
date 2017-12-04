@@ -1,16 +1,24 @@
-# Small LSTM Network to Generate Text for Alice in Wonderland
-import numpy as np
-import re
+from __future__ import print_function
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
+from keras.layers import Dense, Activation
 from keras.layers import LSTM
+from keras.optimizers import RMSprop
+from keras.utils.data_utils import get_file
 from keras.callbacks import ModelCheckpoint
-from keras.utils import np_utils
+import numpy as np
+import random
+import sys, re
+
+# path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
+# text = open(path).read().lower()
+
+# filename = 'data_parsed/trump.txt'
+output_filename = 'output_text/shakespeare_words_out.txt'
+# raw_text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 # load ascii text and covert to lowercase
-filename = 'wonderland.txt'
-raw_text = open(filename, encoding='utf8').read()
+filename = 'data_parsed/trump.txt'
+raw_text = open(filename, encoding='utf8', errors='ignore').read()
 raw_text = raw_text.lower()
 # create mapping of unique chars to integers
 wordList = re.sub("[^\w]", " ",  raw_text).split()
@@ -20,48 +28,96 @@ wordList = [w for w in wordList if re.match("^[a-z]*$", w)]
 words = sorted(list(set(wordList)))
 word_to_int = dict((w, i) for i, w in enumerate(words))
 
-# summarize the loaded data
-n_words = len(wordList)
-n_vocab = len(words)
-print('Total Words: ', n_words)
-print('Total Vocab: ', n_vocab)
-# prepare the dataset of input to output pairs encoded as integers
-seq_length = 100
-dataX = []
-dataY = []
-for i in range(0, n_words - seq_length, 1):
-	seq_in = wordList[i:i + seq_length]
-	seq_out = wordList[i + seq_length]
-	dataX.append([word_to_int[word] for word in seq_in])
-	dataY.append(word_to_int[seq_out])
-n_patterns = len(dataX)
-print('Total Patterns: ', n_patterns)
+# text = text.lower()
 
-# reshape X to be [samples, time steps, features]
-X = np.reshape(dataX, (n_patterns, seq_length, 1))
-# normalize
-X = X / float(n_vocab)
+print('corpus length:', len(raw_text))
 
-# one hot encode the output variable
-y = np_utils.to_categorical(dataY)
+# chars = sorted(list(set(text)))
+print('total words:', len(words))
+char_indices = dict((c, i) for i, c in enumerate(words))
+indices_char = dict((i, c) for i, c in enumerate(words))
 
-# print('Vectorization...')
-# X = np.zeros((n_patterns, seq_length, len(words)), dtype=np.bool)
-# y = np.zeros((n_patterns, len(words)), dtype=np.bool)
-# for i, sentence in enumerate(dataX):
-#     for t, word in enumerate(sentence):
-#         X[i, t, word_to_int[word]] = 1
-#     y[i, word_to_int[dataY[i]]] = 1
+print(char_indices)
 
-# define the LSTM model
+# cut the text in semi-redundant sequences of maxlen characters
+maxlen = 10
+step = 3
+sentences = []
+next_chars = []
+for i in range(0, len(wordList) - maxlen, step):
+    sentences.append(wordList[i: i + maxlen])
+    next_chars.append(wordList[i + maxlen])
+print('nb sequences:', len(sentences))
+
+print('Vectorization...')
+x = np.zeros((len(sentences), maxlen, len(words)), dtype=np.bool)
+y = np.zeros((len(sentences), len(words)), dtype=np.bool)
+for i, sentence in enumerate(sentences):
+    for t, char in enumerate(sentence):
+        x[i, t, char_indices[char]] = 1
+    y[i, char_indices[next_chars[i]]] = 1
+
+
+# build the model: a single LSTM
+print('Build model...')
 model = Sequential()
-model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
-model.add(Dropout(0.2))
-model.add(Dense(y.shape[1], activation='softmax'))
-model.compile(loss='categorical_crossentropy', optimizer='adam')
-# define the checkpoint
-filepath='words-weights-improvement-{epoch:02d}-{loss:.4f}-smaller.hdf5'
+model.add(LSTM(128, input_shape=(maxlen, len(words))))
+# model.add(LSTM(128, input_shape=(maxlen, len(words)), return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
+# model.add(LSTM(128, return_sequences=True))
+# model.add(LSTM(128))
+model.add(Dense(len(words)))
+model.add(Activation('softmax'))
+
+
+optimizer = RMSprop(lr=0.01)
+model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+
+
+def sample(preds, temperature=1.0):
+    # helper function to sample an index from a probability array
+    preds = np.asarray(preds).astype('float64')
+    preds = np.log(preds) / temperature
+    exp_preds = np.exp(preds)
+    preds = exp_preds / np.sum(exp_preds)
+    probas = np.random.multinomial(1, preds, 1)
+    return np.argmax(probas)
+
+
+print('-' * 50)
+
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-words.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
-# fit the model
-model.fit(X, y, epochs=20, batch_size=128, callbacks=callbacks_list)
+
+model.fit(x, y,
+          batch_size=128,
+          epochs=30,
+          callbacks=callbacks_list)
+
+outfile = open(output_filename, 'w')
+diversity = 0.5
+
+start_index = random.randint(0, len(wordList) - maxlen - 1)
+generated = ''
+sentence = wordList[start_index: start_index + maxlen]
+generated += sentence
+print('----- Generating with seed: "' + sentence + '"')
+sys.stdout.write(generated)
+outfile.write(generated)
+
+for i in range(500):
+    x_pred = np.zeros((1, maxlen, len(words)))
+    for t, char in enumerate(sentence):
+        x_pred[0, t, char_indices[char]] = 1.
+
+    preds = model.predict(x_pred, verbose=0)[0]
+    next_index = sample(preds, diversity)
+    next_char = indices_char[next_index]
+
+    generated += next_char
+    sentence = sentence[1:] + next_char
+
+    sys.stdout.write(next_char)
+    outfile.write(next_char)
+print()
