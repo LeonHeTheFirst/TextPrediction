@@ -12,12 +12,12 @@ import sys, re
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-# filename = 'data_parsed/trump.txt'
+# filename = 'data_parsed/drseuss.txt'
 output_filename = 'output_text/shakespeare_words_out.txt'
 # raw_text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 # load ascii text and covert to lowercase
-filename = 'data_parsed/trump.txt'
+filename = 'data_parsed/drseuss.txt'
 raw_text = open(filename, encoding='utf8', errors='ignore').read()
 raw_text = raw_text.lower()
 # create mapping of unique chars to integers
@@ -86,7 +86,7 @@ def sample(preds, temperature=1.0):
 
 print('-' * 50)
 
-filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-shakespeare-words.hdf5'
+filepath = 'weights-improvement-{epoch:02d}-{loss:.4f}-drseuss-words.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 

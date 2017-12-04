@@ -9,14 +9,14 @@ import numpy as np
 import random
 import sys, re, os
 
-filename = 'data_parsed/trump.txt'
-output_filename = 'output_text/trump_out_epoch_1.txt'
-weight_dir_name = 'weights/trump/words/'
-weights_filename = 'weights/trump/weights-improvement-01-1.9294-trump-larger.hdf5'
+filename = 'data_parsed/drseuss.txt'
+output_filename = 'output_text/drseuss_out_epoch_1.txt'
+weight_dir_name = 'weights/drseuss/words/'
+weights_filename = 'weights/drseuss/weights-improvement-01-1.9294-drseuss-larger.hdf5'
 # raw_text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 # load ascii text and covert to lowercase
-filename = 'data_parsed/trump.txt'
+filename = 'data_parsed/drseuss.txt'
 raw_text = open(filename, encoding='utf8', errors='ignore').read()
 raw_text = raw_text.lower()
 # create mapping of unique chars to integers
@@ -109,7 +109,7 @@ for weight_file in files:
     substrings = weight_file.split('-')
     epoch_number = substrings[2]
     source = substrings[4]
-    new_output_filename = 'output_text/' + 'trump' + '_epoch_' + epoch_number + '.txt'
+    new_output_filename = 'output_text/' + 'drseuss' + '_epoch_' + epoch_number + '.txt'
     new_output_file = open(new_output_filename, 'w')
 
     for i in range(1000):
