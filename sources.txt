@@ -5,6 +5,11 @@ http://colah.github.io/posts/2015-08-Understanding-LSTMs/
 https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#multi-gpu-and-distributed-training
 https://keras.io/
 https://www.tensorflow.org/api_docs/python/
+https://arxiv.org/pdf/1402.3511v1.pdf
+https://arxiv.org/pdf/1406.1078v3.pdf
+ftp://ftp.idsia.ch/pub/juergen/TimeCount-IJCNN2000.pdf
+https://arxiv.org/pdf/1503.04069.pdf
+https://medium.com/mlreview/understanding-lstm-and-its-diagrams-37e2f46f1714
 
 # Text Sources
 https://github.com/paigecm/2016-campaign
