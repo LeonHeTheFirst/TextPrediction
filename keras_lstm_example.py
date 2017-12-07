@@ -24,7 +24,7 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/trump.txt'
+filename = 'data_parsed/clinton.txt'
 output_filename = 'output_text/trump_out_long.txt'
 text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 # text = text.lower()
@@ -39,7 +39,7 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 print(char_indices)
 
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 100
+maxlen = 40
 step = 3
 sentences = []
 next_chars = []

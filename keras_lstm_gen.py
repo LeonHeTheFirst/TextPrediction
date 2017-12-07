@@ -24,10 +24,10 @@ import sys, os
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 # text = open(path).read().lower()
 
-filename = 'data_parsed/trump.txt'
+filename = 'data_parsed/drseuss.txt'
 output_filename = 'output_text/trump_out_epoch_1.txt'
-weight_dir_name = 'weights/trump/100character/'
-weights_filename = 'weights/trump/weights-improvement-01-1.9294-trump-larger.hdf5'
+weight_dir_name = 'weights/shakespeare/single/'
+weights_filename = 'weights/clinton/weights-improvement-01-1.9294-trump-larger.hdf5'
 text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 print('corpus length:', len(text))
@@ -91,18 +91,19 @@ for file in os.listdir(weight_dir_name):
         files.append(file)
 
 # outfile = open(output_filename, 'w')
-diversity = 0.5
+diversity = 0.3
 
 start_index = random.randint(0, len(text) - maxlen - 1)
 generated = ''
+seed = text[start_index: start_index + maxlen]
 sentence = text[start_index: start_index + maxlen]
 generated += sentence
-print('----- Generating with seed: "' + sentence + '"')
+print('----- Generating with seed: "' + seed + '"')
 sys.stdout.write(generated)
 # outfile.write(generated)
 
 for weight_file in files:
-
+    sentence = seed
     model.load_weights(weight_dir_name + weight_file)
     model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 

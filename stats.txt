@@ -1,0 +1,26 @@
+clinton
+    example      : 0:58
+drseuss
+    4_layer      : 0:15
+    single_layer : 0:04
+    words        : <0:01
+shakespeare
+    chars        : 1:04
+    words        : 0:25
+trump
+    100character : 2:30
+    40character  : 1:00
+    words        : 0:18
+
+clinton                : 800712   B
+
+drseuss-four-layer     : 3930384  B
+drseuss-single-layer   : 754632   B
+drseuss-words          : 4798896  B
+
+shakespeare-four-layer : 775112   B
+shakespeare-words      : 43007624 B
+
+trump-100c             : 800712   B
+trump                  : 800712   B
+trump-words            : 30992720 B

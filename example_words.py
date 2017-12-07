@@ -17,7 +17,7 @@ output_filename = 'output_text/shakespeare_words_out.txt'
 # raw_text = open(filename, encoding='utf-8', errors='ignore').read().lower()
 
 # load ascii text and covert to lowercase
-filename = 'data_parsed/drseuss.txt'
+filename = 'data_parsed/trump.txt'
 raw_text = open(filename, encoding='utf8', errors='ignore').read()
 raw_text = raw_text.lower()
 # create mapping of unique chars to integers
